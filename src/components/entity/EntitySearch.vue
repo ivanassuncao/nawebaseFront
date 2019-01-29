@@ -1,6 +1,6 @@
 <template>
      <div class="entity-search">
-        <PageTitle icon="fa fa-folder-o" :main="groupentity.name" sub="Grupo de entity" />
+        <PageTitle icon="fa fa-folder-o" :main="groupentity.name" sub="Grupo de Cliente/Fornecedor" />
             <b-form v-show="mode === 'save' || mode === 'remove' || mode === 'read'" >
              <input id="entity-id" type="hidden" v-model="entity.id" />
              <b-row>
@@ -28,19 +28,17 @@
                     </div>
                 </b-col>  
                 <b-col md="3" sm="12">
-                    <b-form-group v-if="entity.physical_person" label="CPF:" label-for="entity-cnpj_cpf">    
-                        <b-form-input v-mask="['###.###.###-##']" id="entity-cnpj_cpf" type="text"
+                    <b-form-group label="CPF/CNPJ:" label-for="entity-cnpj_cpf">    
+                        <b-form-input v-if="entity.physical_person" v-mask="['###.###.###-##']" id="entity-cnpj_cpf" type="text"
                             v-model="entity.cnpj_cpf" required
                             size="sm"
                             :readonly="mode === 'remove' || mode === 'read' || mode === 'insert'"
-                            placeholder="CPF/CNPJ..." />
-                    </b-form-group>
-                     <b-form-group v-else label="CNPJ:" label-for="entity-cnpj_cpf">    
-                        <b-form-input v-mask="['##.###.###/####-##']" id="entity-cnpj_cpf" type="text"
+                            placeholder="CPF..." />
+                        <b-form-input v-else v-mask="['##.###.###/####-##']" id="entity-cnpj_cpf" type="text"
                             v-model="entity.cnpj_cpf" required
                             size="sm"
                             :readonly="mode === 'remove' || mode === 'read' || mode === 'insert'"
-                            placeholder="CPF/CNPJ..." />
+                            placeholder="CNPJ..." />    
                     </b-form-group>
                 </b-col>
                 <b-col md="1" sm="12">
@@ -199,7 +197,7 @@
                                         placeholder="E-mail" />
                                     </b-form-group>
                                 </b-col>
-                                <b-col md="4" sm="12">
+                                <b-col md="3" sm="12">
                                     <b-form-group label="Telefone:" label-for="entity-telephone">
                                         <b-form-input id="entity-telephone" type="text"
                                         v-model="entity.telephone" 
@@ -208,11 +206,19 @@
                                         placeholder="Telefone" />
                                     </b-form-group>
                                 </b-col>
-                                   
+                                 <b-col md="3" sm="12">
+                                    <b-form-group label="Celular:" label-for="entity-cellphone">
+                                        <b-form-input id="entity-cellphone" type="text"
+                                        v-model="entity.cellphone" 
+                                          size="sm"
+                                        :readonly="mode === 'remove' || mode === 'read' || mode === 'insert'"
+                                        placeholder="Telefone" />
+                                    </b-form-group>
+                                </b-col>   
                             </b-row>
                             <b-row>
                                 <b-col md="6" sm="12">
-                                    <b-form-group label="Imagem da Empresa:" label-for="entity-photo">
+                                    <b-form-group label="Imagem da Cliente/Fornecedor:" label-for="entity-photo">
                                         <b-form-file v-model="entity.photo" id="entity-photo" class="mt-3" accept=".jpg, .png, .gif" ></b-form-file>
                                     </b-form-group>
                                 </b-col> 
@@ -221,8 +227,9 @@
                         </b-tab>
                     </b-tabs>
                 </b-card>
+        <br>
          </b-form>
-              <b-row>
+            <b-row>
                 <b-col xs="12">
                     <b-button size="sm" variant="outline-success" class="mr-2" v-show="mode !== 'save' && mode !== 'remove'"
                         @click="alterModo">Adicionar</b-button>
@@ -239,20 +246,20 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class="control-label"> <i class="fa fa-search"></i>  Pesquisar os Clientes/Fornecedores</label>
-                    <input type="text" icon="search" v-model="search" placeholder="Informe o nome do entity" class="form-control">
+                    <input type="text" icon="search" v-model="search" placeholder="Informe o nome do Cliente/Fornecedor" class="form-control">
                 </div>
             </div>
             </b-row>
            
-         <b-table class="table-responsive" hover striped :entitys="filteredList" :fields="fields">
+         <b-table class="table-responsive" hover striped :items="filteredList" :fields="fields">
                <template slot="actions" slot-scope="data">
-                    <b-button title = "Detalhe do registro" size="sm" variant="outline-secondary" @click="loadentity(data.entity, 'read')" class="mr-2 mt-2">
+                    <b-button title = "Detalhe do registro" size="sm" variant="outline-secondary" @click="loadentity(data.item, 'read')" class="mr-2 mt-2">
                         <i class="fa fa-drivers-license-o"></i>
                     </b-button>
-                    <b-button title = "Editar registro" size="sm" variant="outline-warning" @click="loadentity(data.entity)" class="mr-2 mt-2">
+                    <b-button title = "Editar registro" size="sm" variant="outline-warning" @click="loadentity(data.item)" class="mr-2 mt-2">
                         <i class="fa fa-pencil"></i>
                     </b-button>
-                     <b-button title = "Excluir registro" size="sm" variant="outline-danger" @click="loadentity(data.entity, 'remove')" class="mr-2 mt-2">
+                     <b-button title = "Excluir registro" size="sm" variant="outline-danger" @click="loadentity(data.item, 'remove')" class="mr-2 mt-2">
                         <i class="fa fa-trash"></i>
                     </b-button>
                 </template>   
@@ -264,9 +271,11 @@
 import { baseApiUrl, showError } from '@/global'
 import axios from 'axios'
 import PageTitle from '../template/PageTitle'
+import {mask} from 'vue-the-mask'
 
 export default {
     name: 'EntitySearch',
+    directives: {mask},
     components: {PageTitle },
     data: function() {
         return {
@@ -294,7 +303,7 @@ export default {
         computed: {
             filteredList() {
                 return this.entitys.filter(entity => {
-                    return entity.name.toLowerCase().includes(this.search.toLowerCase())
+                    return entity.name_entity.toLowerCase().includes(this.search.toLowerCase())
                     })
             }
         },
@@ -348,6 +357,18 @@ export default {
                         return { value: state.id, text: state.initials }
                     })
                 })
+            },
+            loadCitys() {
+                    const id = this.entity.state_id
+                    if(id){
+                        const url = `${baseApiUrl}/citys/${id}`
+                        axios.get(url).then(res => {
+                            this.citys = res.data.map(city => {
+                                return { value: city.id, text: city.name }
+                            })
+                        })
+                    }
+                  
             },
             loadentity(entity, mode = 'save') {
                 this.mode = mode

@@ -122,7 +122,7 @@
                 </div>
             <hr>
            <transition  name="slide" type="animation" appear>          
-            <b-table class="table-responsive" hover striped :items="filteredList" :fields="fields">
+            <b-table class="table-responsive" v-show="showTable" hover key="slide" striped :items="filteredList" :fields="fields">
                 <template slot="actions" slot-scope="data">
                         <b-button size="sm" variant="outline-secondary" @click="loadgroupentity(data.item, 'read')" class="mr-2 mt-2">
                             <i class="fa fa-drivers-license-o"></i>
@@ -132,12 +132,15 @@
                         </b-button>
                         <b-button size="sm" variant="outline-danger" @click="loadgroupentity(data.item, 'remove')" class="mr-2 mt-2">
                             <i class="fa fa-trash"></i>
-                        </b-button>                       
+                        </b-button>  
+                        <b-button  title = "Adicionar próximo Grupo de Cliente/Fornecedor dentro do grupo" size="sm" variant="outline-primary" @click="actionNewGroupItem(data.item)" class="mr-2 mt-2">
+                            <i class="fa fa-plus"></i>
+                    </b-button>                     
                 </template>   
                     <template slot="accesses" slot-scope="data">
                       <b-button v-show="data.item.synthetic == 0"  size="sm" variant="outline-primary" @click="actionItem(data.item)" class="mr-2 mt-2">
-                            <i class="fa fa-plus"></i>
-                        </b-button>
+                            <i class="fa fa-external-link"></i>
+                    </b-button>
                  </template> 
             </b-table>    
            </transition>  
@@ -147,11 +150,11 @@
 <script>
 import { baseApiUrl, showError } from '@/global'
 import axios from 'axios'
-import ItemSearch from '../item/ItemSearch'
+import EntitySearch from '../entity/EntitySearch'
 
 export default {
     name: 'groupentityAdmin',
-    components: {ItemSearch},
+    components: {EntitySearch},
     data: function() {
         return {
             mode: 'insert',
@@ -206,9 +209,44 @@ export default {
             },
         actionItem(groupentity) {                   
             this.$router.push({
-                    name: 'itemSearch',    
+                    name: 'entitySearch',    
                     params: {id: groupentity.id}
                 })
+        },  
+        actionNewGroupItem(groupentity, mode = 'save') { 
+            this.mode = mode
+            const sizearr = groupentity.internal_code_group_entity.length
+            if(sizearr === 2)
+            {
+                let arr = groupentity.internal_code_group_entity.substring(0,2)
+                if(parseInt(arr).length === 2)
+                {
+                     this.groupentity.internal_code_group_entity = (parseInt(arr) + 1)
+                }else{
+                     this.groupentity.internal_code_group_entity = '0' + (parseInt(arr) + 1)
+                }
+            }
+            if(sizearr === 5)
+            {
+                let arr = groupentity.internal_code_group_entity.substring(4,5)
+                 if(parseInt(arr).length === 2)
+                {
+                     this.groupentity.internal_code_group_entity = groupentity.internal_code_group_entity.substring(0,2) + (parseInt(arr) + 1)
+                }else{
+                     this.groupentity.internal_code_group_entity = groupentity.internal_code_group_entity.substring(0,4)  + (parseInt(arr) + 1)
+                }
+            }
+            if(sizearr === 8)
+            {
+                let arr = groupentity.internal_code_group_entity.substring(7,8)
+                 if(parseInt(arr).length === 2)
+                {
+                     this.groupentity.internal_code_group_entity = groupentity.internal_code_group_entity.substring(0,4) + (parseInt(arr) + 1)
+                }else{
+                     this.groupentity.internal_code_group_entity = groupentity.internal_code_group_entity.substring(0,7)  + (parseInt(arr) + 1)
+                }
+            }
+
         },    
         save() {
             const method = this.groupentity.id ? 'put' : 'post'

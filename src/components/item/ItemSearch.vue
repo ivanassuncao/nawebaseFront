@@ -190,6 +190,7 @@ export default {
             },
              reset() {
                 this.mode = 'insert'
+                this.item = {}
                 this.getItems()
             },
             save() {

@@ -1,7 +1,7 @@
 <template>
     <div class="user-dropdown" >
         <div class="user-button">          
-            <span  class="d-none d-sm-block" >
+            <span class="d-none d-sm-block" >
                 <!--img v-if="emp.caminhoImagem"  :src="`img/${emp.caminhoImagem}`"  class="image"  width="70" alt="logo"/-->
                 <!--img width="70" alt="logo" class="image" src="@/assets/waforman.png">
                 <img width="70" alt="logo" class="image" src="@/assets/wastylus.png">
@@ -59,11 +59,13 @@ export default {
     computed: mapState(['user','compan']),
     methods:{
         logout(){
+
             localStorage.removeItem(userKey)
             localStorage.removeItem(companykey)
             this.$store.commit('setUser',null)
             this.$store.commit('setCompan',null)
             this.$router.push({name: 'auth'})
+
         },
         setCompany() {
             axios.post(`${baseApiUrl}/setCompany`, this.company)
@@ -72,7 +74,6 @@ export default {
                     this.$store.commit('setCompan', res.data)
                     localStorage.setItem(companykey, JSON.stringify(res.data))
                     this.$router.push({ path: '/' })
-                    //this.logoEmp = require(`~/assets/img/${this.empresa.caminhoImagem}`)  
                    
                 })
                 .catch(showError)
