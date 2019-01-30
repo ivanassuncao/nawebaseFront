@@ -1,11 +1,11 @@
 <template>
     <div class="dash-global" >
          <PageTitle icon="fa fa-home" main="Dashboard"
-            sub="Gestão de Loja" />
+            sub="Gestão da Empresa" />
         <div class="stats">
-            <Stat title="Categorias" :value="stat.categories"
+            <Stat title="Vendas" :value="stat.categories"
                 icon="fa fa-folder" color="#d54d50" />
-            <Stat title="Artigos" :value="stat.articles"
+            <Stat title="Clientes/Fornecedores" :value="stat.articles"
                 icon="fa fa-file" color="#3bc480" />
             <Stat title="Usuários" :value="stat.users"
                 icon="fa fa-user" color="#3282cd" />
@@ -45,5 +45,10 @@ export default {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
+        
+    }
+
+     .stats {
+        font-size: 0.8rem;
     }
 </style>

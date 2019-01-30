@@ -7,6 +7,9 @@ import './config/axios'
 import './config/mq'
 import store from './config/store'
 import router from './config/router'
+const moment = require('moment')
+
+moment.locale('pt-br')
 
 Vue.config.productionTip = false
 

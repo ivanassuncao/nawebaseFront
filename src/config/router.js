@@ -9,6 +9,7 @@ import ArticleById from '@/components/article/ArticleById'
 import Auth from '@/components/auth/Auth'
 import ItemSearch from '@/components/item/ItemSearch'
 import EntitySearch from '@/components/entity/EntitySearch'
+import EletronicPoints from '@/components/employee/EletronicPoints'
 
 import {userKey} from '@/global'
 
@@ -18,12 +19,12 @@ const routes = [
 {
     name: 'home',
     path: '/',
-    component: Home
+    component: DashGlobal
 },
 {
     name: 'dashGlobal',
     path: '/dash',
-    component: DashGlobal,
+    component: Home,
 
 },
 {
@@ -48,6 +49,12 @@ const routes = [
     component: Auth
 },
 {
+    name: 'eletronicPoints',
+    path: '/eletronicpoints',
+    component: EletronicPoints
+},
+
+{
     name: 'articlesByCategory',
     path: '/categories/:id/articles',
     component: ArticlesByCategory
@@ -57,6 +64,7 @@ const routes = [
     path: '/articles/:id',
     component: ArticleById
 }
+
 ]
 
 

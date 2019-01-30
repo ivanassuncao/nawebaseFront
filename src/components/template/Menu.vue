@@ -4,6 +4,7 @@
         <nav class="menu">
            <router-link to='/' > <i class="fa fa-home"></i> Home </router-link>
            <router-link to='/admin' > <i class="fa fa-cogs"></i> Administração </router-link>
+           <router-link to='/eletronicpoints' > <i class="fa fa-clock-o"></i> Ponto Eletrônico </router-link>
         </nav>
      </aside>
 </template>

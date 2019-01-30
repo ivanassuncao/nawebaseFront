@@ -299,6 +299,11 @@
                         <i class="fa fa-trash"></i>
                     </b-button>
                 </template>
+                <template slot="accesses" slot-scope="data">
+                    <b-button title = "Acesso aos Cadastro do Funcionário" size="sm" variant="outline-primary" @click="actionItem(data.item)" class="mr-2 mt-2">
+                            <i class="fa fa-external-link"></i>
+                    </b-button>
+                 </template>  
              </b-table>
             </transition>
       </div>
@@ -332,7 +337,8 @@ export default {
                         { key: 'adress', label: 'Endereço', sortable: false },
                         { key: 'blocked', label: 'Bloqueado', sortable: false,
                         formatter: value => value ? 'Sim' : 'Não' },
-                        { key: 'actions', label: 'Ações' }
+                        { key: 'actions', label: 'Ações' },
+                        { key: 'accesses', label: 'Acessos' }
                     ]
                 }
             },
