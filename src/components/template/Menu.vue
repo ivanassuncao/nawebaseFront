@@ -33,7 +33,8 @@ export default {
   text-decoration: none;
   color: #fff;
   font-weight: 300;
-  padding: 7px;
+  padding: 8px;
+   font-size: 0.9rem;
 }
 
 .menu a:hover{
@@ -47,6 +48,8 @@ export default {
 }
 .menu-area{
    background: linear-gradient(to right, #1e469a, #158aaa);
+   
 }
+
 
 </style>

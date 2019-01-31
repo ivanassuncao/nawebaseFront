@@ -62,23 +62,22 @@
                 @click="employeeSignin"
                 class="ml-2"
               >
-                <i class="fa fa-key"></i>
+              <i class="fa fa-key"></i>
+              </b-button>
+                   <b-button
+                title="Fechar Ponto"
+                size="sm"
+                variant="outline-danger"
+                @click="[permission = false,employee = {},exibir =false]"
+                class="ml-2"
+              >
+                <i class="fa fa-ban"></i>
               </b-button>
             </b-form-group>
           </b-col>
         </b-row>
-        <b-row>
-          <b-col md="2" sm="12">
-            <b-button
-              size="sm"
-              v-show="allow"
-              variant="outline-primary"
-              class="ml-2"
-              @click="exibir = !exibir"
-            >Abrir Ponto</b-button>
-          </b-col>
-        </b-row>
       </section>
+     
       <hr>
       <transition name="fade" appear>
         <section key="fade" class="section" v-show="exibir">
@@ -89,24 +88,51 @@
       </transition>
       <b-button
         v-show="exibir"
+        :disabled="this.eletronicpoints.length > 0 ? true : false"
         size="sm"
         variant="outline-success"
         class="mr-2 mt-2 mb-2"
         @click="save"
-      >Adicionar</b-button>
+      >Bater o Ponto</b-button>
 
       <transition name="slide" type="animation" appear>
-        <b-table
-          class="table-responsive"
-          v-show="exibir"
-          key="slide"
-          hover
-          striped
-          :items="eletronicpoints"
-          :fields="fields"
-        ></b-table>
+          <b-row>
+            <b-col md="6" sm="12">
+            <b-table
+            class="table-responsive"
+            v-show="exibir"
+            key="slide"
+            hover
+            striped
+            :items="this.eletronicpoints"
+            :fields="fields"
+          >
+          <template slot="actions" slot-scope="data">
+                      <b-button :title="data.item.input_point ? 'Bater Saída': 'Bater Entrada'" size="sm" variant="outline-primary" @click="saveNew(data.item)" class="mr-2 mt-2">
+                          <i class="fa fa-exchange"></i>
+                      </b-button>
+                      <b-button title = "Informar Observação" size="sm" variant="outline-warning" @click="allow = !allow" class="mr-2 mt-2">
+                          <i class="fa fa-commenting-o"></i>
+                      </b-button>
+                  </template>
+          </b-table>
+            </b-col>
+              <b-col md="6" sm="12">
+              <b-form-group v-show="allow" label="Observação:" label-for="eletronicpoint-comments">
+                  <b-form-textarea id="eletronicpoint-comments"
+                      :rows="3"
+                      :max-rows="6"
+ 
+                      size="sm"
+                      v-model="eletronicpoint.comments"
+                      placeholder="" />
+              </b-form-group>
+              </b-col>
+        </b-row>
+       
       </transition>
     </b-form>
+    
   </div>
 </template>
 
@@ -127,18 +153,22 @@ export default {
       eletronicpoints: [],
       registration: "",
       fields: [
-        { key: "data", label: "Data", sortable: false },
+        { key: "date", label: "Data", sortable: false,
+           formatter: value => (moment(value).format("DD-MM-YYYY"))
+         },
         { key: "time", label: "Hora", sortable: false },
         {
           key: "input_point",
-          label: "Entrada",
+          label: "Tipo",
           sortable: false,
-          formatter: value => (value ? "Sim" : "Não")
+          formatter: value => (value ? "Entrada" : "Saída")
         },
-        { key: "comments", label: "Observação", sortable: false }
+        { key: "comments", label: "Observação", sortable: false },
+        { key: 'actions', label: 'Ações' }
       ],
       message: null,
       currentTime: null,
+      setTime: null,
       exibir: false,
       permission: false,
       allow: false,
@@ -160,11 +190,10 @@ export default {
   },
   methods: {
      loadEletronicPoints() {
-         const id = this.employee.id
-        const url = `${baseApiUrl}/electronicpoints/${id}/employees`
+        const id = this.employee.id
+        const url = `${baseApiUrl}/eletronicpoints/${id}/employees`
         axios.get(url).then(res => {
-            this.electronicpoints = res.data
-            
+            this.eletronicpoints = res.data
         })
                 },
     updateCurrentTime() {
@@ -182,7 +211,8 @@ export default {
       axios
         .post(`${baseApiUrl}/employeeSignin`, this.employee)
         .then(() => {
-          this.allow = true;
+          this.exibir = true;
+          this.loadEletronicPoints()
         })
         .catch(showError);
     },
@@ -194,12 +224,34 @@ export default {
     },
     save() {
       const datenow = new Date();
-      const timenow = datenow.getTimezoneOffset();
+      //const timenow = moment().format("LT");
+      this.setTime = datenow.getTime()
       const method = this.eletronicpoint.id ? "put" : "post";
       const id = this.eletronicpoint.id ? `/${this.eletronicpoint.id}` : "";
       this.eletronicpoint.employee_id = this.employee.id;
       this.eletronicpoint.date = this.formatDate(datenow);
-      this.eletronicpoint.time = this.formatTime(timenow);
+      this.eletronicpoint.time = this.formatTime(this.setTime);
+
+      axios[method](`${baseApiUrl}/eletronicpoints${id}`, this.eletronicpoint)
+        .then(() => {
+          this.$toasted.global.defaultSuccess();
+          this.reset();
+        })
+        .catch(showError);
+    },
+     saveNew(eletronicpoint) {
+       if(eletronicpoint.input_point === 1)
+       {
+         this.eletronicpoint.input_point = 0
+       }
+      const datenow = new Date();
+      //const timenow = moment().format("LT");
+      this.setTime = datenow.getTime()
+      const method = this.eletronicpoint.id ? "put" : "post";
+      const id = this.eletronicpoint.id ? `/${this.eletronicpoint.id}` : "";
+      this.eletronicpoint.employee_id = this.employee.id;
+      this.eletronicpoint.date = this.formatDate(datenow);
+      this.eletronicpoint.time = this.formatTime(this.setTime);
 
       axios[method](`${baseApiUrl}/eletronicpoints${id}`, this.eletronicpoint)
         .then(() => {
@@ -243,7 +295,7 @@ section.section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 25px;
+  padding-top: 5px;
   background: linear-gradient(to right, #1e469a, #49a7c1);
 }
 

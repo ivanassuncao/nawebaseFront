@@ -26,13 +26,13 @@ export default {
     .stat {
         flex: 1;
         display: flex;
-        border-radius: 8px;
-        margin-right: 20px;
-        margin-bottom: 20px;
+        border-radius: 15px;
+        margin-right: 40px;
+        margin-bottom: 10px;
         background-color: #FFF;
         padding: 20px;
         border: 1px solid rgba(0, 0, 0, 0.2);
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
     }
 
     .stat-icon {
@@ -41,7 +41,7 @@ export default {
     }
 
     .stat-icon i {
-        font-size: 5rem;
+        font-size: 4rem;
     }
 
     .stat-info {
@@ -49,13 +49,14 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        font-size: 4rem;
     }
 
     .stat-title {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .stat-value {
-        font-size: 3rem;
+        font-size: 1rem;
     }
 </style>
